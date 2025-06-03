@@ -1,0 +1,21 @@
+FUSE_FLAGS = -D_FILE_OFFSET_BITS=64 -lfuse -pthread
+INCLUDES = -Iinclude 
+SRC = src/fs_fuse.c src/superblock.c src/inode.c src/block.c src/file.c src/dir.c
+OBJ = $(SRC:.c=.o)
+TARGET = mi_fuse
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	gcc -Wall $(OBJ) -o $@ $(FUSE_FLAGS)
+
+%.o: %.c
+	gcc -Wall $(INCLUDES) -c $< -o $@ $(FUSE_FLAGS)
+
+run: $(TARGET)
+	mkdir -p punto_montaje
+	./$(TARGET) punto_montaje -f
+
+clean:
+	rm -f $(TARGET) src/*.o
+
